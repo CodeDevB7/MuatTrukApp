@@ -119,8 +119,8 @@ export const ITEMS: ItemDef[] = [
     color: '#bde0fe',
   },
   {
-    id: 'terigu_tulis',
-    name: 'Terigu Tulis (Dus 10kg)',
+    id: 'terigu_tulip',
+    name: 'Terigu Tulip (Dus 10kg)',
     weightKg: 10,
     category: 'Box',
     description: 'Berat 10kg.',
