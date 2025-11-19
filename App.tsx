@@ -47,6 +47,22 @@ const App: React.FC = () => {
     setPlan(null);
   }, []);
 
+  const handleUpdateQuantity = useCallback((item: ItemDef, qty: number) => {
+    setCart((prev) => {
+      if (qty <= 0) {
+        return prev.filter((i) => i.id !== item.id);
+      }
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: qty } : i
+        );
+      }
+      return [...prev, { ...item, quantity: qty }];
+    });
+    setPlan(null);
+  }, []);
+
   const handleReset = () => {
     setCart([]);
     setPlan(null);
@@ -110,6 +126,7 @@ const App: React.FC = () => {
                  <ItemSelector 
                     onAddToCart={handleAddToCart}
                     onRemoveFromCart={handleRemoveFromCart}
+                    onUpdateQuantity={handleUpdateQuantity}
                     cart={cart}
                  />
               </div>

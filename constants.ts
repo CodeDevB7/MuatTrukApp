@@ -32,6 +32,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 50,
     category: 'Sack',
     description: 'Satu palet 40 karung (5 samping x 8 atas).',
+    color: '#d4a373', // Brown sack
   },
   {
     id: 'karung_25kg',
@@ -39,6 +40,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 25,
     category: 'Sack',
     description: 'Satu palet ~70 karung (7 samping x 10 atas).',
+    color: '#e9edc9', // Pale yellowish
   },
   {
     id: 'sagu_aks',
@@ -46,13 +48,15 @@ export const ITEMS: ItemDef[] = [
     weightKg: 25,
     category: 'Sack',
     description: 'Tinggi dan berat. 80/palet (8 samping x 10 atas).',
+    color: '#fefae0', // Whiteish
   },
   {
     id: 'karung_sioci',
     name: 'Karung Sioci DW',
-    weightKg: 25, // Assuming roughly 25kg based on context provided, user didn't specify exact weight but grouped with sacks
+    weightKg: 25,
     category: 'Sack',
     description: '80/palet (8 samping x 10 atas).',
+    color: '#faedcd',
   },
   
   // BALES (Bal)
@@ -62,6 +66,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 20,
     category: 'Bale',
     description: '48/palet (6 samping x 8 atas).',
+    color: '#e0e1dd', // Off-white
   },
   
   // BOXES (Dus)
@@ -71,6 +76,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 10,
     category: 'Box',
     description: 'Ringan tapi tinggi. 150/palet (15 samping x 10 atas).',
+    color: '#8ecae6', // Light blue box
   },
   {
     id: 'kacang_kupas_dus',
@@ -78,6 +84,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 25,
     category: 'Box',
     description: '65/palet (13 samping x 5 atas).',
+    color: '#ffb703', // Orange/Yellow
   },
   {
     id: 'minyak_dus',
@@ -85,6 +92,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 17,
     category: 'Box',
     description: 'Muatan tinggi (bisa 10-14 tier).',
+    color: '#fb8500', // Dark Orange
   },
   {
     id: 'gula_vit_dus',
@@ -92,6 +100,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 25,
     category: 'Box',
     description: 'Berat.',
+    color: '#f1c0e8', // Pinkish
   },
   {
     id: 'terigu_dus_1kg',
@@ -99,6 +108,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 12,
     category: 'Box',
     description: 'Segitiga/Cakra/Lencana 1kg. 140/palet.',
+    color: '#a2d2ff',
   },
   {
     id: 'terigu_dus_halfkg',
@@ -106,6 +116,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 10,
     category: 'Box',
     description: 'Segitiga/Cakra/Lencana 1/2kg. 90/palet.',
+    color: '#bde0fe',
   },
   {
     id: 'terigu_tulis',
@@ -113,6 +124,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 10,
     category: 'Box',
     description: 'Berat 10kg.',
+    color: '#cdb4db',
   },
 
   // PACKS
@@ -122,6 +134,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 8,
     category: 'Pack',
     description: 'Tidak stabil. Taruh paling atas/akhir. 220/palet.',
+    color: '#ffffff', // Pure white
   },
   
   // OTHERS FROM WEIGHT LIST
@@ -131,6 +144,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 50,
     category: 'Sack',
     description: 'Harus di atas sagu jika dicampur.',
+    color: '#bc6c25', // Dark brown
   },
   {
     id: 'kacang_ijo_yulex',
@@ -138,6 +152,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 25,
     category: 'Sack',
     description: '25kg.',
+    color: '#606c38', // Green
   },
   {
     id: 'kacang_merah',
@@ -145,6 +160,7 @@ export const ITEMS: ItemDef[] = [
     weightKg: 25,
     category: 'Sack',
     description: '25kg.',
+    color: '#9e2a2b', // Red
   },
 ];
 

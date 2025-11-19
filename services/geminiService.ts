@@ -13,32 +13,38 @@ export const generateLoadingPlan = async (
   const model = "gemini-2.5-flash";
 
   const cartDescription = items
-    .map((item) => `- ${item.name}: ${item.quantity} unit (Total: ${item.quantity * item.weightKg} kg)`)
+    .map((item) => `- ${item.name}: ${item.quantity} unit (@ ${item.weightKg} kg)`)
     .join("\n");
 
   const totalWeight = items.reduce((acc, item) => acc + item.quantity * item.weightKg, 0);
 
   const prompt = `
-    Anda adalah ahli logistik muat truk profesional di Indonesia. 
-    Tugas anda adalah membuat rencana muat barang (Loading Plan) yang sangat spesifik berdasarkan aturan-aturan berikut.
+    Anda adalah ahli logistik muat truk. Saya butuh output yang SANGAT SEDERHANA dan PRAKTIS untuk sopir/kuli muat.
+    Jangan berikan instruksi bertele-tele. Fokus pada HITUNGAN MATEMATIKA SUSUNAN BARANG (TIER).
 
     ${USER_CONTEXT_RULES}
 
-    DATA INPUT:
-    Truk yang dipilih: ${truck.name} (Maks: ${truck.maxWeightKg}kg, Target Ideal: ${truck.targetWeightKg}kg).
-    Total Berat Barang Saat Ini: ${totalWeight} kg.
+    CONTOH OUTPUT YANG DIINGINKAN (LOGIKA):
+    "Ada 370 karung sagu di Truk Double.
+    Maka dibagi menjadi:
+    1. Depan: 4 Tier. Susunan 5 samping x 11 atas (55/tier). Total 220.
+    2. Belakang: 3 Tier. Susunan 5 samping x 10 atas (50/tier). Total 150.
+    Total 370. Pas."
 
-    Barang yang akan dimuat:
+    TUGAS ANDA:
+    Hitung kombinasi "Tier" (baris ke belakang) agar semua barang muat dengan seimbang dari Depan (Kabin) ke Belakang (Pintu).
+    Pastikan berat terdistribusi baik.
+    
+    PENTING:
+    Untuk keperluan visualisasi 3D, Anda WAJIB memberikan estimasi angka "tierWidth" (jumlah ke samping) dan "tierHeight" (jumlah ke atas) untuk setiap grup.
+    
+    DATA INPUT:
+    Truk: ${truck.name} (Target Ideal: ${truck.targetWeightKg}kg).
+    Total Berat: ${totalWeight} kg.
+    Barang:
     ${cartDescription}
 
-    INSTRUKSI OUTPUT:
-    1. Tentukan apakah muatan ini Aman, Perlu Hati-hati (Mendekati batas), atau Overload.
-    2. Buat langkah-langkah memuat barang dari BAGIAN DEPAN (dekat supir) mundur ke BAGIAN BELAKANG (pintu).
-    3. Kelompokkan barang berdasarkan jenis dan kestabilan sesuai aturan (contoh: Sagu di bawah, Garam di atas/belakang).
-    4. Berikan estimasi "Tier" (baris) yang terpakai di truk untuk setiap kelompok barang.
-    5. Ingat aturan khusus: Gula jangan terlalu tinggi, Kardus jangan diinjak beban berat.
-
-    Responlah HANYA dengan format JSON berikut.
+    Responlah HANYA dengan format JSON.
   `;
 
   try {
@@ -50,36 +56,28 @@ export const generateLoadingPlan = async (
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            planName: { type: Type.STRING, description: "Judul rencana singkat" },
+            planName: { type: Type.STRING, description: "Judul singkat" },
             totalWeightCalculated: { type: Type.NUMBER },
             weightStatus: { type: Type.STRING, enum: ["SAFE", "WARNING", "OVERLOAD"] },
-            generalAdvice: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING },
-              description: "Saran umum penting (misal: Gula ditaruh merata di lantai)" 
-            },
-            steps: {
+            totalTiersUsed: { type: Type.NUMBER, description: "Total estimasi baris ke belakang yang terpakai" },
+            summary: { type: Type.STRING, description: "Kesimpulan singkat satu kalimat" },
+            tierGroups: {
               type: Type.ARRAY,
-              description: "Langkah muat dari Depan (Kabin) ke Belakang",
+              description: "Urutan muat dari Depan (Kabin) ke Belakang",
               items: {
                 type: Type.OBJECT,
                 properties: {
-                  stepNumber: { type: Type.INTEGER },
-                  location: { type: Type.STRING, description: "Posisi dalam truk (Depan Bawah, Depan Atas, Tengah, Belakang)" },
-                  instruction: { type: Type.STRING, description: "Instruksi detail (misal: Susun 5 ke samping, 8 ke atas)" },
-                  items: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        itemName: { type: Type.STRING },
-                        quantity: { type: Type.INTEGER },
-                        note: { type: Type.STRING, description: "Catatan khusus item ini jika ada" }
-                      }
-                    }
-                  },
-                  warnings: { type: Type.ARRAY, items: { type: Type.STRING } }
-                }
+                  position: { type: Type.STRING, enum: ["DEPAN (Kabin)", "TENGAH", "BELAKANG (Pintu)"] },
+                  tierCount: { type: Type.NUMBER, description: "Jumlah baris/tier untuk konfigurasi ini (kedalaman)" },
+                  configuration: { type: Type.STRING, description: "Format text: 'X samping, Y atas'" },
+                  tierWidth: { type: Type.NUMBER, description: "Jumlah barang ke samping (X axis)" },
+                  tierHeight: { type: Type.NUMBER, description: "Jumlah barang ke atas (Y axis)" },
+                  quantityPerTier: { type: Type.NUMBER, description: "Jumlah barang dalam satu tier/baris" },
+                  totalItemsInGroup: { type: Type.NUMBER, description: "tierCount * quantityPerTier" },
+                  itemDescription: { type: Type.STRING, description: "Nama barang di tumpukan ini" },
+                  notes: { type: Type.STRING, description: "Catatan singkat (opsional)" }
+                },
+                required: ["position", "tierCount", "configuration", "quantityPerTier", "totalItemsInGroup", "itemDescription", "tierWidth", "tierHeight"]
               }
             }
           }
@@ -94,6 +92,6 @@ export const generateLoadingPlan = async (
 
   } catch (error) {
     console.error("Error generating plan:", error);
-    throw new Error("Gagal membuat rencana muat. Coba lagi.");
+    throw new Error("Gagal menghitung susunan tier. Coba lagi.");
   }
 };

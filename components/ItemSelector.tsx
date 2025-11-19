@@ -6,10 +6,11 @@ import { Plus, Minus, Search, Package } from 'lucide-react';
 interface Props {
   onAddToCart: (item: ItemDef, qty: number) => void;
   onRemoveFromCart: (itemId: string) => void;
+  onUpdateQuantity: (item: ItemDef, qty: number) => void;
   cart: CartItem[];
 }
 
-export const ItemSelector: React.FC<Props> = ({ onAddToCart, onRemoveFromCart, cart }) => {
+export const ItemSelector: React.FC<Props> = ({ onAddToCart, onRemoveFromCart, onUpdateQuantity, cart }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
@@ -93,17 +94,28 @@ export const ItemSelector: React.FC<Props> = ({ onAddToCart, onRemoveFromCart, c
                 <div className="flex items-center bg-white rounded-lg border border-slate-200 shadow-sm">
                   <button
                     onClick={() => onRemoveFromCart(item.id)}
-                    className="p-1.5 hover:bg-slate-100 text-slate-600 disabled:opacity-30"
+                    className="p-2 hover:bg-slate-100 text-slate-600 disabled:opacity-30"
                     disabled={qty === 0}
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="w-8 text-center text-sm font-semibold text-slate-700">
-                    {qty}
-                  </span>
+                  
+                  <input
+                    type="number"
+                    min="0"
+                    className="w-14 text-center text-sm font-semibold text-slate-700 outline-none focus:bg-blue-50 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-x border-slate-100"
+                    value={qty > 0 ? qty : ''}
+                    placeholder="0"
+                    onChange={(e) => {
+                      const val = e.target.value === '' ? 0 : parseInt(e.target.value);
+                      onUpdateQuantity(item, isNaN(val) ? 0 : val);
+                    }}
+                    onClick={(e) => e.currentTarget.select()}
+                  />
+
                   <button
                     onClick={() => onAddToCart(item, 1)}
-                    className="p-1.5 hover:bg-slate-100 text-blue-600"
+                    className="p-2 hover:bg-slate-100 text-blue-600"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
