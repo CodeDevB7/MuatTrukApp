@@ -1,0 +1,5 @@
+{
+  "name": "MuatTruk Pintar",
+  "description": "Aplikasi cerdas untuk membantu perencanaan muat barang ke truk (Engkel, Double, L300) berdasarkan aturan berat dan dimensi spesifik.",
+  "requestFramePermissions": []
+}
